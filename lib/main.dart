@@ -3,6 +3,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
+import 'sendpage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -106,22 +107,25 @@ class _BluetoothScanPageState extends State<BluetoothScanPage> {
     });
   }
 
+
+    // ... existing code ...
+
   void connectToDevice(BluetoothDevice device) async {
     print("Connecting to ${device.name.isEmpty ? "名前なしデバイス" : device.name}");
     try {
-      await device.connect();
-      print("接続成功: ${device.id}");
-
-      if (device.id.toString() == targetMacAddress) {
-        print("正しいデバイスに接続しました！");
-        await sendDataToServer(device.name, device.id.toString());
-      } else {
-        print("ターゲットデバイスではありません");
-      }
+      // デバイス選択時にBluetoothSendPageに遷移
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BluetoothSendPage(device: device),
+        ),
+      );
     } catch (e) {
-      print("接続失敗: $e");
+      print("エラー: $e");
     }
   }
+
+  // ... existing code ...
 
   @override
   Widget build(BuildContext context) {
