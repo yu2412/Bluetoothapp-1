@@ -94,17 +94,17 @@ class _BluetoothScanPageState extends State<BluetoothScanPage> {
     startBluetoothScan();
   }
 
-void startBluetoothScan() async {
-  // スキャンを開始
-  await FlutterBluePlus.startScan(timeout: Duration(seconds: 10));
+  void startBluetoothScan() async {
+    // スキャンを開始
+    await FlutterBluePlus.startScan(timeout: Duration(seconds: 10));
 
-  // スキャン結果をリッスン
-  FlutterBluePlus.scanResults.listen((results) {
-    setState(() {
-      scanResults = results;
+    // スキャン結果をリッスン
+    FlutterBluePlus.scanResults.listen((results) {
+      setState(() {
+        scanResults = results;
+      });
     });
-  });
-}
+  }
 
   void connectToDevice(BluetoothDevice device) async {
     print("Connecting to ${device.name.isEmpty ? "名前なしデバイス" : device.name}");
@@ -128,6 +128,17 @@ void startBluetoothScan() async {
     return Scaffold(
       appBar: AppBar(
         title: Text('Bluetoothデバイス検出'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                scanResults.clear();
+              });
+              startBluetoothScan();
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: scanResults.length,

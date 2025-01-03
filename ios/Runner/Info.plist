@@ -30,6 +30,10 @@
 	<string>アプリがBluetoothデバイスをスキャンして接続するために必要です。</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>アプリがBluetoothデバイスと通信するために必要です。</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>アプリがフォアグラウンドで位置情報を利用するために必要です。</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>アプリがバックグラウンドでも位置情報を利用するために必要です。</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
