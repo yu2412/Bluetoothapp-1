@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BluetoothSendPage extends StatefulWidget {
   final BluetoothDevice device;
@@ -25,7 +26,26 @@ class _BluetoothSendPageState extends State<BluetoothSendPage> {
   void initState() {
     super.initState();
     targetDevice = widget.device;
+    _loadSavedValues(); // 保存された値を読み込み
     connectToDevice(targetDevice);
+  }
+
+  // SharedPreferencesから値を読み込む
+  Future<void> _loadSavedValues() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      idController.text = prefs.getString('saved_id') ?? "default_id";
+      passwordController.text =
+          prefs.getString('saved_password') ?? "default_password";
+    });
+  }
+
+  // SharedPreferencesに値を保存する
+  Future<void> _saveValues() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('saved_id', idController.text);
+    await prefs.setString('saved_password', passwordController.text);
+    print("Values saved: ID=${idController.text}, Password=${passwordController.text}");
   }
 
   void connectToDevice(BluetoothDevice device) async {
@@ -65,21 +85,30 @@ class _BluetoothSendPageState extends State<BluetoothSendPage> {
 
       await pwCharacteristic.write(password.codeUnits, withoutResponse: false);
       print("Password sent: $password");
+
+      // 送信後に値を保存
+      await _saveValues();
     } catch (e) {
       print("Error sending data: $e");
     }
   }
 
-  void listenToResultCharacteristic(BluetoothCharacteristic characteristic) {
-    characteristic.value.listen((value) {
-      setState(() {
-        serverResult = String.fromCharCodes(value);
-        print("Received server result: $serverResult");
-      });
+void listenToResultCharacteristic(BluetoothCharacteristic characteristic) {
+  characteristic.value.listen((value) {
+    setState(() {
+      String receivedValue = String.fromCharCodes(value);
+      if (receivedValue == "Success") {
+        serverResult = "送信成功";
+      } else {
+        serverResult = receivedValue; // その他のレスポンスをそのまま代入
+      }
+      print("Received server result: $serverResult");
     });
+  });
 
-    characteristic.setNotifyValue(true);
-  }
+  characteristic.setNotifyValue(true);
+}
+
 
   @override
   Widget build(BuildContext context) {

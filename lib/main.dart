@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'sendpage.dart';
+import 'phpsender_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -107,8 +108,7 @@ class _BluetoothScanPageState extends State<BluetoothScanPage> {
     });
   }
 
-
-    // ... existing code ...
+  // ... existing code ...
 
   void connectToDevice(BluetoothDevice device) async {
     print("Connecting to ${device.name.isEmpty ? "名前なしデバイス" : device.name}");
@@ -140,6 +140,18 @@ class _BluetoothScanPageState extends State<BluetoothScanPage> {
                 scanResults.clear();
               });
               startBluetoothScan();
+            },
+          ),
+          // PHPデータ送信ページへの遷移ボタンを追加
+          IconButton(
+            icon: Icon(Icons.cloud_upload),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PhpSenderPage(), // 新しいページを作成
+                ),
+              );
             },
           ),
         ],
